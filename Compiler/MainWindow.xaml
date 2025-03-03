@@ -1,0 +1,161 @@
+﻿<Window x:Class="Compiler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Compiler"
+        mc:Ignorable="d"
+        Title="Compiler" Height="600" Width="800"
+        AllowDrop="True"
+        Drop="Window_Drop"
+        DragEnter="Window_DragEnter"
+        Icon="/icons/compiler.png">
+
+    
+    <Window.Resources>
+        <local:LineNumberConverter x:Key="LineNumberConverter"/>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveCommand}"/>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewCommand}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenCommand}"/>
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Создать" Command="{Binding NewCommand}"/>
+                <MenuItem Header="Открыть" Command="{Binding OpenCommand}"/>
+                <MenuItem Header="Сохранить" Command="{Binding SaveCommand}"/>
+                <MenuItem Header="Сохранить как" Command="{Binding SaveAsCommand}"/>
+                <MenuItem Header="Выход" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Правка">
+                <MenuItem Header="Отменить" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Повторить" Command="{Binding RedoCommand}"/>
+                <MenuItem Header="Вырезать" Command="{Binding CutCommand}"/>
+                <MenuItem Header="Копировать" Command="{Binding CopyCommand}"/>
+                <MenuItem Header="Вставить" Command="{Binding PasteCommand}"/>
+                <MenuItem Header="Удалить" Command="{Binding DeleteCommand}"/>
+                <MenuItem Header="Выделить все" Command="{Binding SelectAllCommand}"/>
+                <MenuItem Header="Размер шрифта">
+                    <MenuItem Header="Увеличить" Command="{Binding IncreaseFontSizeCommand}"/>
+                    <MenuItem Header="Уменьшить" Command="{Binding DecreaseFontSizeCommand}"/>
+                    <MenuItem Header="Сбросить" Command="{Binding ResetFontSizeCommand}"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Текст"/>
+            <MenuItem Header="Пуск"/>
+            <MenuItem Header="Справка">
+                <MenuItem Header="Справка" Command="{Binding HelpCommand}"/>
+                <MenuItem Header="О программе" Command="{Binding AboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <ToolBar Grid.Row="1">
+
+            <Button Command="{Binding NewCommand}" Margin="0,0,5,0" ToolTip="Новый файл">
+                <Image Source="/icons/new.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding OpenCommand}" Margin="0,0,5,0" ToolTip="Открыть">
+                <Image Source="/icons/open.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding SaveCommand}" Margin="0,0,5,0" ToolTip="Сохранить">
+                <Image Source="/icons/save.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding UndoCommand}" Margin="0,0,5,0" ToolTip="Отменить">
+                <Image Source="/icons/undo.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding RedoCommand}" Margin="0,0,5,0" ToolTip="Повторить">
+                <Image Source="/icons/redo.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding CutCommand}" Margin="0,0,5,0" ToolTip="Вырезать">
+                <Image Source="/icons/cut.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding CopyCommand}" Margin="0,0,5,0" ToolTip="Копировать">
+                <Image Source="/icons/copy.png" Width="30" Height="30"/>
+            </Button>
+            <Button Command="{Binding PasteCommand}" Margin="0,0,5,0" ToolTip="Вставить">
+                <Image Source="/icons/paste.png" Width="30" Height="30"/>
+            </Button>
+            <Button  Margin="0,0,5,0" ToolTip="Запуск">
+                <Image Source="/icons/play.png" Width="30" Height="30"/>
+            </Button>
+        </ToolBar>
+
+        
+        <TabControl Grid.Row="2" ItemsSource="{Binding Files}" Margin="10,0,10,0" SelectedItem="{Binding SelectedFile}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <Button 
+                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.CloseTabCommand}"
+                                CommandParameter="{Binding}"
+                                ToolTip="Закрыть вкладку"
+                                Padding="0" 
+                                Margin="0">
+                            <Image Source="/icons/closetab.png" Width="16" Height="16"/>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ScrollViewer Grid.Column="0" 
+                                     x:Name="LineNumbersScrollViewer"
+                                     VerticalScrollBarVisibility="Hidden"
+                                     HorizontalScrollBarVisibility="Disabled">
+                            <TextBlock Text="{Binding Text, Converter={StaticResource LineNumberConverter}}"
+                                      FontFamily="Consolas" 
+                                      FontSize="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.EditorFontSize}"
+                                      Margin="5,0,5,0" 
+                                      VerticalAlignment="Stretch" 
+                                      TextAlignment="Right" 
+                                      Background="#F0F0F0"/>
+                        </ScrollViewer>
+                        <TextBox Grid.Column="1" 
+                                x:Name="EditorTextBox"
+                                Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                                AcceptsReturn="True" 
+                                AcceptsTab="True" 
+                                VerticalScrollBarVisibility="Auto"
+                                FontFamily="Consolas"
+                                FontSize="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.EditorFontSize}"
+                                Loaded="Synhronize_Scrollers"/>
+                    </Grid>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+
+        <GridSplitter Grid.Row="3" 
+                      Height="5" 
+                      HorizontalAlignment="Stretch"
+                      Margin="10,0,10,0"
+                      Background="Gray"/>
+
+        <!-- Область результатов -->
+        <TextBox Grid.Row="4"
+                 Margin="10,0,10,5"
+                 Text="{Binding ResultText}" 
+                 IsReadOnly="True"
+                 FontFamily="Consolas"
+                 FontSize="{Binding ResultFontSize}"
+                 VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>
+    

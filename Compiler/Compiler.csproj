@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Help.html" />
+    <None Remove="icons\closetab.png" />
+    <None Remove="icons\compiler.png" />
+    <None Remove="icons\copy.png" />
+    <None Remove="icons\cut.png" />
+    <None Remove="icons\new.png" />
+    <None Remove="icons\open.png" />
+    <None Remove="icons\paste.png" />
+    <None Remove="icons\play.png" />
+    <None Remove="icons\redo.png" />
+    <None Remove="icons\save.png" />
+    <None Remove="icons\undo.png" />
+    <None Remove="Resources\About.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\About.html" />
+    <Resource Include="Resources\Help.html" />
+    <Resource Include="icons\closetab.png" />
+    <Resource Include="icons\compiler.png" />
+    <Resource Include="icons\copy.png" />
+    <Resource Include="icons\cut.png" />
+    <Resource Include="icons\new.png" />
+    <Resource Include="icons\open.png" />
+    <Resource Include="icons\paste.png" />
+    <Resource Include="icons\play.png" />
+    <Resource Include="icons\redo.png" />
+    <Resource Include="icons\save.png" />
+    <Resource Include="icons\undo.png" />
+  </ItemGroup>
+
+</Project>
