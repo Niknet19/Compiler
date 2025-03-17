@@ -8,6 +8,8 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Diagnostics;
+using Compiler.Parser;
+using System.Text;
 
 namespace Compiler
 {
@@ -74,6 +76,8 @@ namespace Compiler
         public ICommand HelpCommand { get; } 
         public ICommand AboutCommand { get; }
 
+        public ICommand RunCommand { get; }
+
         public MainViewModel()
         {
             Files = new ObservableCollection<TextFile>();
@@ -95,6 +99,7 @@ namespace Compiler
             CloseTabCommand = new RelayCommand(CloseTab);
             HelpCommand = new RelayCommand(ShowHelp); 
             AboutCommand = new RelayCommand(ShowAbout);
+            RunCommand = new RelayCommand(RunAnalyzing);
 
             _editorFontSize = 14;
             _resultFontSize = 14;
@@ -103,6 +108,25 @@ namespace Compiler
             //SelectedFile = Files[0];
         }
 
+
+        private void RunAnalyzing(object parameter)
+        {
+            TextParser parser= new TextParser();
+            
+            var parsedLines = parser.ParseMultipleLines(_selectedFile.Text.Split('\n'));
+            StringBuilder resultText = new StringBuilder();
+
+            for (int i = 0; i < parsedLines.Count; i++)
+            {
+                resultText.AppendLine($"Строка {i + 1}:");
+                foreach (var token in parsedLines[i])
+                {
+                        resultText.AppendLine(token.ToString());
+                }
+                resultText.AppendLine(); // Пустая строка между разобранными строками
+            }
+            ResultText = resultText.ToString();
+        }
 
         private void ShowHelp(object parameter)
         {

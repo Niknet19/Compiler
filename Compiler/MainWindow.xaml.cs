@@ -42,7 +42,6 @@ namespace Compiler
         //Метод для синхронизации прокрутки scrollviewer в textbox и textblock
         private void Synhronize_Scrollers(object sender, RoutedEventArgs e)
         {
-            
             if (sender is TextBox textBox && textBox.Template.FindName("PART_ContentHost", textBox) is ScrollViewer editorScrollViewer)
             {
                 

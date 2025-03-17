@@ -87,7 +87,7 @@
             <Button Command="{Binding PasteCommand}" Margin="0,0,5,0" ToolTip="Вставить">
                 <Image Source="/icons/paste.png" Width="30" Height="30"/>
             </Button>
-            <Button  Margin="0,0,5,0" ToolTip="Запуск">
+            <Button  Margin="0,0,5,0" ToolTip="Запуск" Command="{Binding RunCommand}">
                 <Image Source="/icons/play.png" Width="30" Height="30"/>
             </Button>
         </ToolBar>
