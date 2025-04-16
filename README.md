@@ -67,12 +67,15 @@ const float id = + 123.123;
 ## Описание Грамматики
 
 ### Терминальные символы (Vt)
+```
 Vt = {a, ... z,A, ... Z, 0, ... 9, "=", "+", "-", " ",.,;, const, float, double, letter, digit}
-
+```
 ### Нетерминальные символы (Vn)
+```
 Vn = {<START>, <SPACE_AFTER_CONST>, <SPACE_AFTER_TYPE>, <TYPENAME>,<ID>,<IDREM>, <NUMBER>, <INTREM>, <REAL>, <REALREM>, <SEMICOLON>}
-
+```
 ## Правила вывода
+```
 1) START -> "const" <SPACE_AFTER_CONST>
 2) <SPACE_AFTER_CONST> -> " " <TYPENAME>
 3) <TYPENAME> -> "float" <SPACE_AFTER_TYPE> | "double" <SPACE_AFTER_TYPE>
@@ -87,7 +90,7 @@ Vn = {<START>, <SPACE_AFTER_CONST>, <SPACE_AFTER_TYPE>, <TYPENAME>,<ID>,<IDREM>,
 
 letter ->  a | b | ... | z | A | B | ... | Z
 digit -> 0 | 1 | ... | 9
-
+```
 
 ## Классификация грамматики
 - Грамматика является автоматной (регулярной), так как все правила соответствуют формату \( A -> aB \) или \( A -> a \).
