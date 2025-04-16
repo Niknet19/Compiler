@@ -20,7 +20,6 @@ namespace Compiler
         private string _resultText;
         private double _editorFontSize;
         private double _resultFontSize;
-
         public ObservableCollection<TextFile> Files
         {
             get => _files;
@@ -49,6 +48,7 @@ namespace Compiler
             get => _editorFontSize;
             set { _editorFontSize = value; OnPropertyChanged(); }
         }
+
 
         public double ResultFontSize
         {
@@ -104,28 +104,68 @@ namespace Compiler
             _editorFontSize = 14;
             _resultFontSize = 14;
 
+            NewCommand.Execute(null);
+
             //Files.Add(new TextFile("NewFile1.txt"));
             //SelectedFile = Files[0];
         }
 
 
+
+
+
         private void RunAnalyzing(object parameter)
         {
-            TextParser parser= new TextParser();
-            
+            TextParser parser = new TextParser();
+
             var parsedLines = parser.ParseMultipleLines(_selectedFile.Text.Split('\n'));
-            StringBuilder resultText = new StringBuilder();
 
             for (int i = 0; i < parsedLines.Count; i++)
             {
-                resultText.AppendLine($"Строка {i + 1}:");
-                foreach (var token in parsedLines[i])
-                {
-                        resultText.AppendLine(token.ToString());
-                }
-                resultText.AppendLine(); // Пустая строка между разобранными строками
+                parser.SyntaxAnalyze(parsedLines[i]);
+                ResultText = string.Join('\n',parser.GetErrors());
             }
-            ResultText = resultText.ToString();
+
+            //for (int i = 0; i < parsedLines.Count; i++)
+            //{
+            //    resultText.AppendLine($"Строка {i + 1}:");
+            //    for (int j = 0; j < parsedLines[i].Count; j++)
+            //    {
+            //        var token = parsedLines[i][j];
+
+                //        // Проверяем, является ли текущий токен пробелом
+                //        if (token.Type == TokenType.Space)
+                //        {
+                //            // Проверяем соседние токены
+                //            bool skipSpace = false;
+                //            if (j > 0 && j < parsedLines[i].Count - 1)
+                //            {
+                //                var prevToken = parsedLines[i][j - 1];
+                //                var nextToken = parsedLines[i][j + 1];
+
+
+                //                if ((prevToken.Type == TokenType.Assignment || nextToken.Type == TokenType.Assignment) ||
+                //                    (prevToken.Type == TokenType.Plus || nextToken.Type == TokenType.Plus) ||
+                //                    (prevToken.Type == TokenType.Minus || nextToken.Type == TokenType.Minus)
+                //                    || (prevToken.Type == TokenType.Semicolon || nextToken.Type == TokenType.Semicolon))
+                //                {
+                //                    skipSpace = true;
+                //                }
+                //            }
+
+                //            if (!skipSpace)
+                //            {
+                //                resultText.AppendLine(token.ToString());
+                //            }
+                //        }
+                //        else
+                //        {
+                //            resultText.AppendLine(token.ToString());
+                //        }
+                //    }
+                //    resultText.AppendLine();
+                //}
+                //ResultText = resultText.ToString();
         }
 
         private void ShowHelp(object parameter)
@@ -189,35 +229,39 @@ namespace Compiler
 
         private void NewFile(object parameter)
         {
-            var inputDialog = new Window
-            {
-                Title = "Новый файл",
-                Width = 300,
-                Height = 150,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Content = new StackPanel
-                {
-                    Margin = new Thickness(10),
-                    Children =
-                    {
-                        new TextBlock { Text = "Введите имя файла:" },
-                        new TextBox { Name = "FileNameInput", Margin = new Thickness(0, 5, 0, 5) },
-                        new Button { Content = "OK", IsDefault = true, Margin = new Thickness(0, 5, 0, 0) }
-                    }
-                }
-            };
+            //var inputDialog = new Window
+            //{
+            //    Title = "Новый файл",
+            //    Width = 300,
+            //    Height = 150,
+            //    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            //    Content = new StackPanel
+            //    {
+            //        Margin = new Thickness(10),
+            //        Children =
+            //        {
+            //            new TextBlock { Text = "Введите имя файла:" },
+            //            new TextBox { Name = "FileNameInput", Margin = new Thickness(0, 5, 0, 5) },
+            //            new Button { Content = "OK", IsDefault = true, Margin = new Thickness(0, 5, 0, 0) }
+            //        }
+            //    }
+            //};
 
-            var okButton = (inputDialog.Content as StackPanel).Children[2] as Button;
-            var fileNameInput = (inputDialog.Content as StackPanel).Children[1] as TextBox;
-            okButton.Click += (s, e) => inputDialog.DialogResult = true;
-            fileNameInput.Text = $"NewFile{Files.Count + 1}.txt";
+            //var okButton = (inputDialog.Content as StackPanel).Children[2] as Button;
+            //var fileNameInput = (inputDialog.Content as StackPanel).Children[1] as TextBox;
+            //okButton.Click += (s, e) => inputDialog.DialogResult = true;
+            //fileNameInput.Text = $"NewFile{Files.Count + 1}.txt";
 
-            if (inputDialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(fileNameInput.Text))
-            {
-                var newFile = new TextFile(fileNameInput.Text);
-                Files.Add(newFile);
-                SelectedFile = newFile;
-            }
+            //if (inputDialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(fileNameInput.Text))
+            //{
+            //    var newFile = new TextFile(fileNameInput.Text);
+            //    Files.Add(newFile);
+            //    SelectedFile = newFile;
+            //}
+
+            var newFile = new TextFile($"NewFile{Files.Count + 1}.txt");
+            Files.Add(newFile);
+            SelectedFile = newFile;
         }
 
         private void OpenFile(object parameter)
@@ -296,7 +340,6 @@ namespace Compiler
         }
 
         private bool CanExecuteWhenModified(object parameter) => SelectedFile?.IsModified ?? false;
-
         private void Undo(object parameter) => ApplicationCommands.Undo.Execute(null, null);
         private void Redo(object parameter) => ApplicationCommands.Redo.Execute(null, null);
         private void Cut(object parameter) => ApplicationCommands.Cut.Execute(null, null);
