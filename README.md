@@ -1,5 +1,9 @@
+# Персональный вариант:
+Десятичные константы языка С/С++
+```
+const float id = + 123.123;
+```
 # Справка по текстовому редактору
-
 ## Пункты меню
 
 - **Файл → Создать (Ctrl+N)**: Создает новую вкладку с пустым текстовым файлом. Имя файла по умолчанию — `NewFileN.txt`, где `N` — номер следующего файла.
@@ -45,13 +49,6 @@
 
 Этот документ описывает автоматную грамматику для языка, который позволяет объявлять переменные с типами `float` или `double` и присваивать им вещественные числа. Грамматика является регулярной, что означает, что она может быть реализована с помощью конечного автомата.
 
-## Описание языка
-
-Язык поддерживает строки вида:
-- `const float x 123.45;`
-- `const double yyy -0.789 ;`
-- `const float z 1.2e-3;`
-
 Особенности:
 - Начинается с ключевого слова `const`.
 - За ним следует тип: `float` или `double`.
@@ -70,46 +67,46 @@
 ## Описание Грамматики
 
 ### Терминальные символы (Vt)
-- Буквы: `a, b, ..., z, A, B, ..., Z`
-- Цифры: `0, 1, ..., 9`
-- Специальные символы: `=`, `+`, `-`, `e`, `' '` (пробел), `.`, `;`
-- Ключевые слова: `const`, `float`, `double`
-
+```
+Vt = {a, ... z,A, ... Z, 0, ... 9, "=", "+", "-", " ",.,;, const, float, double, letter, digit}
+```
 ### Нетерминальные символы (Vn)
-- `<START>`
-- `<SPACE_AFTER_CONST>`
-- `<SPACE_AFTER_TYPE>`
-- `<SPACE_AFTER_ID>`
-- `<SPACE_AFTER_NUMBER>`
-- `<TYPENAME>`
-- `<ID>`
-- `<IDREM>`
-- `<NUMBER>`
-- `<INTREM>`
-- `<REAL>`
-- `<REALREM>`
-- `<EXP>`
-- `<EXPREM>`
-
+```
+Vn = {<START>, <SPACE_AFTER_CONST>, <SPACE_AFTER_TYPE>, <TYPENAME>,<ID>,<IDREM>, <NUMBER>, <INTREM>, <REAL>, <REALREM>, <SEMICOLON>}
+```
 ## Правила вывода
+```
+1) START -> "const" <SPACE_AFTER_CONST>
+2) <SPACE_AFTER_CONST> -> " " <TYPENAME>
+3) <TYPENAME> -> "float" <SPACE_AFTER_TYPE> | "double" <SPACE_AFTER_TYPE>
+4)<SPACE_AFTER_TYPE> -> " " <ID>
+5)<ID> -> letter <IDREM>
+6)<IDREM> -> letter <IDREM> | digit <IDREM> | "=" <NUMBER>
+7)<NUMBER> -> "+" <INTREM> | "-" <INTREM> | <INTREM>
+8)<INTREM> = digit <INTREM> | <REAL> | digit <SEMICOLON>
+9)<REAL> -> "." <REALREM>
+10)<REALREM> -> digit <REALREM> | digit <SEMICOLON>
+11) <SEMICOLON> -> ";"
 
-1. `<START> -> const <SPACE_AFTER_CONST>`
-2. `<SPACE_AFTER_CONST>-> ' ' <SPACE_AFTER_CONST> | ' '<TYPENAME>`
-3. `<TYPENAME> -> float ' ' <SPACE_AFTER_TYPE> | double ' ' <SPACE_AFTER_TYPE>`
-4. `<SPACE_AFTER_TYPE>-> ' ' <SPACE_AFTER_TYPE> | <ID>`
-5. `<ID> -> letter <IDREM>`
-6. `<IDREM> -> letter <IDREM> | digit <IDREM> | <SPACE_AFTER_ID>`
-7. `<SPACE_AFTER_ID> -> ' ' <SPACE_AFTER_ID> | ' ' <NUMBER>`
-8. `<NUMBER> -> + digit <INTREM> | - digit <INTREM> | digit <INTREM>`
-9. `<INTREM> -> digit <INTREM> | . <REAL>`
-10. `<REAL> -> digit <REALREM>`
-11. `<REALREM> -> digit <REALREM> | <SPACE_AFTER_NUMBER> | e <EXP>`
-12. `<EXP>-> digit <EXPREM> | -digit <EXPREM> | +digit <EXPREM>`
-13. `<EXPREM>-> digit <EXPREM> | <SPACE_AFTER_NUMBER>`
-14. `<SPACE_AFTER_NUMBER> -> ; | ' ' <SPACE_AFTER_NUMBER>`
-15. `letter -> a | b | ... | z | A | B | ... | Z`
-16. `digit -> 0 | 1 | ... | 9`
+letter ->  a | b | ... | z | A | B | ... | Z
+digit -> 0 | 1 | ... | 9
+```
 
-
-## Замечания
+## Классификация грамматики
 - Грамматика является автоматной (регулярной), так как все правила соответствуют формату \( A -> aB \) или \( A -> a \).
+
+## Примеры допустимых строк
+Язык поддерживает строки вида:
+- `const float x = 123.45;`
+- `const double yyy = -.789 ;`
+- `const float z = 1123;`
+
+## Граф конечного автомата для данного языка
+![Graph](https://github.com/user-attachments/assets/39d1c3bf-54b0-4e82-830d-92b7831422ca)
+
+## Тестовые примеры
+![Снимок экрана 2025-04-15 185949](https://github.com/user-attachments/assets/1b0bc4b0-f319-43d2-aea6-57f4ff705593)
+![Снимок экрана 2025-04-15 190015](https://github.com/user-attachments/assets/c60c69b9-fd5e-4ab2-b3ec-1355afd52435)
+![Снимок экрана 2025-04-15 190123](https://github.com/user-attachments/assets/9c51fc07-ce24-4ddc-83bd-71e46cb63e75)
+![Снимок экрана 2025-04-15 190422](https://github.com/user-attachments/assets/590d6213-d5fd-4400-931e-6fec59cd59d0)
+
