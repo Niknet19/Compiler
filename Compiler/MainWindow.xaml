@@ -53,7 +53,24 @@
                     <MenuItem Header="Сбросить" Command="{Binding ResetFontSizeCommand}"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Текст"/>
+            <MenuItem Header="Текст">
+                <MenuItem Header="Постановка задачи" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Task.html"/>
+                <MenuItem Header="Грамматика" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Grammar.html"/>
+                <MenuItem Header="Классификация грамматики" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Classification.html"/>
+                <MenuItem Header="Метод анализа" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Method.html"/>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Neutralization.html"/>
+                <MenuItem Header="Тестовые примеры" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Examples.html"/>
+                <MenuItem Header="Список литературы" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Sources.html"/>
+                <MenuItem Header="Исходный код программы" Command="{Binding ShowTextCommand}" 
+            CommandParameter="Resources/Code.html"/>
+            </MenuItem>
             <MenuItem Header="Пуск"/>
             <MenuItem Header="Справка">
                 <MenuItem Header="Справка" Command="{Binding HelpCommand}"/>

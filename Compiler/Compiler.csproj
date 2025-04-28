@@ -22,10 +22,26 @@
     <None Remove="icons\save.png" />
     <None Remove="icons\undo.png" />
     <None Remove="Resources\About.html" />
+    <None Remove="Resources\Classification.html" />
+    <None Remove="Resources\Code.html" />
+    <None Remove="Resources\Examples.html" />
+    <None Remove="Resources\Grammar.html" />
+    <None Remove="Resources\Graph.jpg" />
+    <None Remove="Resources\Method.html" />
+    <None Remove="Resources\Neutralization.html" />
+    <None Remove="Resources\Sources.html" />
+    <None Remove="Resources\Task.html" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\About.html" />
+    <Resource Include="Resources\Classification.html" />
+    <Resource Include="Resources\Code.html" />
+    <Resource Include="Resources\Examples.html" />
+    <Resource Include="Resources\Grammar.html">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
+    <Resource Include="Resources\Graph.jpg" />
     <Resource Include="Resources\Help.html" />
     <Resource Include="icons\closetab.png" />
     <Resource Include="icons\compiler.png" />
@@ -38,6 +54,12 @@
     <Resource Include="icons\redo.png" />
     <Resource Include="icons\save.png" />
     <Resource Include="icons\undo.png" />
+    <Resource Include="Resources\Method.html" />
+    <Resource Include="Resources\Neutralization.html" />
+    <Resource Include="Resources\Sources.html" />
+    <Resource Include="Resources\Task.html">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
 
 </Project>

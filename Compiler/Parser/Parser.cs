@@ -54,7 +54,10 @@ namespace Compiler.Parser
         private List<Token> tokens;
         private string inputstring;
 
-
+        public static bool isKeyword(string token)
+        {
+            return Keywords.Contains(token);
+        }
         private bool IsLetter(char c)
         {
             if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') return true;
@@ -153,11 +156,6 @@ namespace Compiler.Parser
             return tokens;
         }
 
-        private bool FindTokenByValue(string tokenValue)
-        {
-            string cleanString = Regex.Replace(inputstring, @"[^0-9a-zA-Z +\-=.;]", "");
-            return cleanString.Contains(tokenValue);
-        }
 
         private int FindNextToken(TokenType findType, TokenType before = TokenType.Null)
         {
@@ -184,7 +182,6 @@ namespace Compiler.Parser
             }
             catch (Exception ex)
             {
-                errors.Add(ex.Message);
 
             }
         }
@@ -218,9 +215,12 @@ namespace Compiler.Parser
 
             if (token == "float" || token == "double")
             {
+                errors.Clear();
                 errors.Add("Пропущено ключевое слово const");
-                errors.Add("Пропущен пробел после const");
-                ParseSpaceAfterType();
+                //errors.Add("Пропущен пробел после const");
+                tokenIndex = 0;
+                ParseSpaceAfterConst();
+                //ParseSpaceAfterType();
             }
             else
             if (token != "const")
@@ -268,7 +268,7 @@ namespace Compiler.Parser
             string token = string.Empty;
             int startindex = tokenIndex;
 
-            while (tokens[tokenIndex].Type != TokenType.Space && tokens[tokenIndex].Type != TokenType.Assignment)
+            while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Space && tokens[tokenIndex].Type != TokenType.Assignment)
             {
                 if (tokens[tokenIndex].Type != TokenType.Identifier && tokens[tokenIndex].Type != TokenType.Keyword &&
                     tokens[tokenIndex].Type != TokenType.Space && tokens[tokenIndex].Type != TokenType.Integer
@@ -289,12 +289,6 @@ namespace Compiler.Parser
                     tokenIndex++;
                 }
             }
-            //if (token == "")
-            //{
-            //    errors.Add("Пропущен тип");
-            //    ParseSpaceAfterType();
-            //}
-            //else
             if (token != "float" && token != "double")
             {
                 if (FindNextToken(TokenType.Identifier, TokenType.Assignment) != -1)
@@ -320,16 +314,8 @@ namespace Compiler.Parser
 
         private void ParseSpaceAfterType()
         {
-            //if (tokens[tokenIndex].Type == TokenType.Assignment)
-            //{
-            //    errors.Add("Пропущен пробел после типа");
-            //    errors.Add($"Пропущен id");
-            //    ParseEqual();
-            //    return;
-            //}
-            //else
-            //{
-            if (tokens[tokenIndex].Type != TokenType.Space)
+            
+            if (tokenIndex >= tokens.Count || tokens[tokenIndex].Type != TokenType.Space)
             {
                 errors.Add("Пропущен пробел после имени типа");
             }
@@ -344,28 +330,24 @@ namespace Compiler.Parser
             string errorstring = string.Empty;
             string token = string.Empty;
             bool idStarted = false;
-
-            while (tokens[tokenIndex].Type != TokenType.Assignment && tokens[tokenIndex].Type != TokenType.Space)
+            while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Assignment && tokens[tokenIndex].Type != TokenType.Space)
             {
-                while (tokens[tokenIndex].Type != TokenType.Identifier &&
+                while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Identifier &&
                     (tokens[tokenIndex].Type != TokenType.Integer || !idStarted)
                     && tokens[tokenIndex].Type != TokenType.Keyword && tokens[tokenIndex].Type != TokenType.Assignment &&
                     tokens[tokenIndex].Type != TokenType.Space)
                 {
-                    //if (tokens[tokenIndex].Type == TokenType.Space) // пропускаем пробелы
-                    //{
-                    //    tokenIndex++;
-                    //    continue;
-                    //}
                     errorstring += tokens[tokenIndex].Value;
                     tokenIndex++;
                 }
+
                 if (errorstring != string.Empty)
                 {
                     errors.Add($"Неожиданный символ, отброшено {errorstring}");
                 }
                 errorstring = "";
-                if (tokens[tokenIndex].Type == TokenType.Identifier || tokens[tokenIndex].Type == TokenType.Integer)
+                if (tokens[tokenIndex].Type == TokenType.Identifier || tokens[tokenIndex].Type == TokenType.Integer
+                    || tokens[tokenIndex].Type == TokenType.Keyword)
                 {
                     idStarted = true;
                     token += tokens[tokenIndex].Value;
@@ -375,7 +357,12 @@ namespace Compiler.Parser
             }
             if (token == "")
             {
-                errors.Add("Пропущен id");
+                errors.Add("Пропущен идентификатор");
+                ParseEqual();
+            }
+            else if (isKeyword(token))
+            {
+                errors.Add($"Ожидали идентификатор получили ключевое слово {token}");
                 ParseEqual();
             }
             else
@@ -392,15 +379,14 @@ namespace Compiler.Parser
             while (tokenIndex < tokens.Count && tokens[tokenIndex].Type == TokenType.Space) tokenIndex++;
             if (tokenIndex < tokens.Count && tokens[tokenIndex].Type == TokenType.Assignment)
             {
-
-                //errors.Add($"Equal {tokens[tokenIndex].Value}");
                 tokenIndex++;
                 ParseNumber();
             }
             else
             {
                 while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Integer && tokens[tokenIndex].Type != TokenType.Semicolon
-                    && tokens[tokenIndex].Type != TokenType.Assignment)
+                    && tokens[tokenIndex].Type != TokenType.Assignment && tokens[tokenIndex].Type != TokenType.Plus && 
+                    tokens[tokenIndex].Type != TokenType.Minus)
                 {
                     errorstring += tokens[tokenIndex].Value;
                     tokenIndex++;
@@ -409,12 +395,11 @@ namespace Compiler.Parser
                 {
                     errors.Add($"Неожиданный символ, отброшено {errorstring}");
                 }
-                if (tokens[tokenIndex].Type != TokenType.Assignment)
+                if (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Assignment || tokenIndex >= tokens.Count)
                 {
-                    errors.Add($"Не найден символ =");
+                    errors.Add($"Пропущен оператор =");
                 }
                 else tokenIndex++;
-                //tokenIndex--;
                 ParseNumber();
 
             }
@@ -431,11 +416,12 @@ namespace Compiler.Parser
             bool numberStarted = false;
             bool hasSign = false;
             bool hasDot = false;
+            bool hasNumbersAfterDot = false;
             while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Semicolon)
             {
                 if (tokens[tokenIndex].Type == TokenType.Space && numberStarted) break;
                 while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Integer &&
-                (tokens[tokenIndex].Type != TokenType.Dot || hasDot) &&
+                (tokens[tokenIndex].Type != TokenType.Dot || hasDot || !numberStarted) &&
                 ((tokens[tokenIndex].Type != TokenType.Plus && tokens[tokenIndex].Type != TokenType.Minus)
                 || hasSign)
                  && tokens[tokenIndex].Type != TokenType.Semicolon)
@@ -469,6 +455,7 @@ namespace Compiler.Parser
 
                 if (tokenIndex < tokens.Count && tokens[tokenIndex].Type == TokenType.Integer)
                 {
+                    if (hasDot) hasNumbersAfterDot = true;
                     token += tokens[tokenIndex].Value;
                     numberStarted = true;
                     tokenIndex++;
@@ -484,39 +471,56 @@ namespace Compiler.Parser
                     }
 
                 }
-
             }
-            if (token == "")
+            if (token == ""  || !numberStarted)
             {
                 errors.Add("Пропущено число");
-                ParseSemicolon();
+
             }
-            else
+            else if (hasDot && !hasNumbersAfterDot)
             {
-                ParseSemicolon();
+                errors.Add("Неверно заданное число. Отсутствуют числа после .");
             }
+            ParseSemicolon();
+
 
         }
 
 
         private void ParseSemicolon()
         {
-            if (tokens[tokenIndex].Type == TokenType.Space) tokenIndex++;
+            bool semicolonFound = false;
             string errorstring = string.Empty;
-            if (tokenIndex >= tokens.Count)
+
+            while (tokenIndex < tokens.Count)
+            {
+                var currentToken = tokens[tokenIndex];
+
+                if (currentToken.Type == TokenType.Semicolon)
+                {
+                    semicolonFound = true;
+                    tokenIndex++;
+                    break;
+                }
+
+                if (currentToken.Type != TokenType.Space)
+                {
+                    errorstring+=currentToken.Value;
+                }
+
+                tokenIndex++;
+            }
+
+            if (errorstring.Length > 0)
+            {
+                errors.Add($"Неожиданный символы, отброшено: {errorstring}");
+            }
+
+            if (!semicolonFound)
             {
                 errors.Add("Не найден символ ;");
             }
 
-            while (tokenIndex < tokens.Count && tokens[tokenIndex].Type != TokenType.Semicolon)
-            {
-                errorstring += tokens[tokenIndex].Value;
-                tokenIndex++;
-            }
-            if (errorstring != string.Empty)
-            {
-                errors.Add($"Неожиданный символ, отброшено {errorstring}");
-            }
         }
 
 

@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика и нейтрализация синтаксических ошибок</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #eaecef;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+        h1 { font-size: 1.8em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.25em; }
+        p {
+            margin-bottom: 16px;
+        }
+        .highlight {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .image-container {
+            text-align: center;
+            margin: 24px 0;
+            padding: 16px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+        }
+        .image-caption {
+            font-size: 0.9em;
+            color: #586069;
+            text-align: center;
+            font-style: italic;
+            margin-top: 8px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #e1e4e8;
+        }
+        ul {
+            padding-left: 2em;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: rgba(27,31,35,0.05);
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+        }
+    </style>
+</head>
+<body>
+    <h1>5. Диагностика и нейтрализация синтаксических ошибок</h1>
+
+    <p>Согласно заданию на курсовую работу, необходимо реализовать нейтрализацию синтаксических ошибок, используя метод Айронса.</p>
+
+    <h2>5.1 Метод Айронса</h2>
+
+    <p>Суть метода Айронса заключается в следующем:</p>
+
+    <p>При обнаружении ошибки (во входной цепочке в процессе разбора встречается символ, который не соответствует ни одному из ожидаемых символов), входная цепочка символов выглядит следующим образом: <code>Tt</code>, где <code>T</code> – следующий символ во входном потоке (ошибочный символ), <code>t</code> – оставшаяся во входном потоке цепочка символов после <code>T</code>. Алгоритм нейтрализации состоит из следующих шагов:</p>
+
+    <ul>
+        <li>Определяются недостроенные кусты дерева разбора;</li>
+        <li>Формируется множество <code>L</code> – множество остаточных символов недостроенных кустов дерева разбора;</li>
+        <li>Из входной цепочки удаляется следующий символ до тех пор, пока цепочка не примет вид <code>Tt</code>, такой, что <code>U => T</code>, где <code>U ∈ L</code>, то есть до тех пор, пока следующий в цепочке символ <code>T</code> не сможет быть выведен из какого-нибудь из остаточных символов недостроенных кустов.</li>
+        <li>Определяется, какой из недостроенных кустов стал причиной появления символа <code>U</code> в множестве <code>L</code> (иначе говоря, частью какого из недостроенных кустов является символ <code>U</code>).</li>
+    </ul>
+
+    <p>Таким образом, определяется, к какому кусту в дереве разбора можно «привязать» оставшуюся входную цепочку символов после удаления из текста ошибочного фрагмента.</p>
+
+    <h2>5.2 Метод Айронса для автоматной грамматики</h2>
+
+    <p>Разрабатываемый синтаксический анализатор построен на базе автоматной грамматики. Реализация алгоритма Айронса для автоматной грамматики имеет следующую особенность.</p>
+
+    <p>Дерево разбора с использованием автоматной грамматики представлено на рисунке 2.</p>
+
+    <div class="image-container">
+        <img src="data:image/png;base64,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" alt="Структура дерева разбора для автоматной грамматики">
+        <div class="image-caption">Рисунок 2 – Структура дерева разбора для автоматной грамматики</div>
+    </div>
+
+    <p>Таким образом, при возникновении синтаксической ошибки в процессе разбора с использованием автоматной грамматики, в дереве разбора всегда будет только один недостроенный куст (см. рисунок 3).</p>
+
+    <div class="image-container">
+        <img src="data:image/png;base64,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" alt="Недостроенный куст при возникновении синтаксической ошибки">
+        <div class="image-caption">Рисунок 3 – Недостроенный куст при возникновении синтаксической ошибки (выделен пунктиром)</div>
+    </div>
+
+    <p>Поскольку единственный недостроенный куст – это тот, во время построения которого возникла синтаксическая ошибка, то это единственный куст, к которому можно привязать оставшуюся входную цепочку символов.</p>
+
+    <p>Предлагается свести алгоритм нейтрализации к последовательному удалению следующего символа во входной цепочке до тех пор, пока следующий символ не окажется одним из допустимых в данный момент разбора.</p>
+</body>
+</html>

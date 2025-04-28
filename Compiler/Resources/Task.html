@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Константы в C++ | README</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #eaecef;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: rgba(27,31,35,0.05);
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+        }
+
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 3px;
+            padding: 16px;
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        ul {
+            padding-left: 2em;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        .highlight {
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Константы в языке C++</h1>
+
+    <p>Константы — элементы данных, значения которых известны и в процессе выполнения программы не изменяются.</p>
+
+    <h2>Синтаксис объявления</h2>
+
+    <p>Для описания констант в C++ используется ключевое слово <code>const</code> с указанием типа (<code>float</code> или <code>double</code>):</p>
+
+    <pre>const (float|double) имя_константы = значение;</pre>
+
+    <h2>Примеры констант</h2>
+
+    <h3>1. Целая десятичная константа</h3>
+    <p>Десятичное число без точки (со знаком или без):</p>
+    <div class="highlight">
+        <pre><code>const float id = 1111;</code></pre>
+    </div>
+
+    <h3>2. Вещественная константа с фиксированной точкой</h3>
+    <p>Действительное число с целой и дробной частями:</p>
+    <div class="highlight">
+        <pre><code>const double min = -11313.1313;</code></pre>
+    </div>
+
+    <h2>Валидные записи согласно грамматике G[‹START›]</h2>
+
+    <ul>
+        <li><code>const double aaa = .001;</code></li>
+        <li><code>const float dd11dd = 1313;</code></li>
+        <li><code>const double bbbaf3 = 1113.13123;</code></li>
+    </ul>
+</body>
+</html>
