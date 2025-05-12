@@ -12,6 +12,8 @@ using Compiler.Parser;
 using System.Text;
 using System.Reflection.Metadata;
 using System.Data.Common;
+using static System.Net.Mime.MediaTypeNames;
+using Application = System.Windows.Application;
 
 namespace Compiler
 {
@@ -103,7 +105,7 @@ namespace Compiler
             CloseTabCommand = new RelayCommand(CloseTab);
             HelpCommand = new RelayCommand(ShowHelp); 
             AboutCommand = new RelayCommand(ShowAbout);
-            RunCommand = new RelayCommand(Run);
+            RunCommand = new RelayCommand(RunRegex);
             ShowTextCommand = new RelayCommand(ShowHtmlPage);
             _editorFontSize = 14;
             _resultFontSize = 14;
@@ -114,6 +116,17 @@ namespace Compiler
             SelectedFile = Files[0];
         }
 
+
+        private void RunRegex(object parameter)
+        {
+            ResultText = string.Empty;
+            var result = RegexParser.FindAndFormatMatches(_selectedFile.Text);
+            foreach (var str in result)
+            {
+                ResultText += str;
+            }
+            
+        }
 
         private void Run(object parameter)
         {
