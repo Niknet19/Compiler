@@ -119,8 +119,9 @@ namespace Compiler
 
         private void RunRegex(object parameter)
         {
+            string type = (string) parameter;
             ResultText = string.Empty;
-            var result = RegexParser.FindAndFormatMatches(_selectedFile.Text);
+            var result = RegexParser.FindAndFormatMatches(_selectedFile.Text,type);
             foreach (var str in result)
             {
                 ResultText += str;

@@ -71,7 +71,11 @@
                 <MenuItem Header="Исходный код программы" Command="{Binding ShowTextCommand}" 
             CommandParameter="Resources/Code.html"/>
             </MenuItem>
-            <MenuItem Header="Пуск"/>
+            <MenuItem Header="Пуск">
+                <MenuItem Header="Поиск номеров" Command="{Binding RunCommand}" CommandParameter="Number"/>
+                <MenuItem Header="Поиск ISBN" Command="{Binding RunCommand}" CommandParameter="ISBN"/>
+                <MenuItem Header="Поиск Email" Command="{Binding RunCommand}" CommandParameter="Email"/>
+            </MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Header="Справка" Command="{Binding HelpCommand}"/>
                 <MenuItem Header="О программе" Command="{Binding AboutCommand}"/>
