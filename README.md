@@ -177,4 +177,8 @@ digit -> 0 | 1 | ... | 9
 Найдено: john.doe@sub.domain.org в позиции 28
 ```
 
+## Граф автомата
+![Regex](https://github.com/user-attachments/assets/c8766c9d-c0aa-45ac-9422-0b99cb2e8054)
+
+
 
