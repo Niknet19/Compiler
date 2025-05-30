@@ -319,9 +319,15 @@ CompareOp() →
 
 ## Диаграмма сканера
 
+![Parsing](https://github.com/user-attachments/assets/ac75496f-556f-42de-ad67-19bb53ce69a8)
+
+
 ## Тестовые примеры
 `begin x := (5## + 3) * 2 end`
 
 ![image](https://github.com/user-attachments/assets/851eb465-5609-4e9c-98e1-87ea42290a16)
 
+`begin if x < 10 y @20 else := end`
+
+![image](https://github.com/user-attachments/assets/37f5504e-17dc-44d5-8ea7-c065a67d7010)
 
