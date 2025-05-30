@@ -215,5 +215,103 @@ digit -> 0 | 1 | ... | 9
 ## Граф автомата
 ![Regex](https://github.com/user-attachments/assets/c8766c9d-c0aa-45ac-9422-0b99cb2e8054)
 
+# Реализация метода рекурсивного спуска для синтаксического анализа
 
+## Грамматика
+G[begin-stmt]:
+1. begin-stmt → begin stmt-list end
+2. stmt-list → stmt | stmt ; stmt-list
+3. stmt → if-stmt | while-stmt | begin-stmt | assg-stmt
+4. if-stmt → if bool-expr then stmt else stmt
+5. while-stmt → while bool-expr do stmt
+6. assg-stmt → VAR := arith-expr
+7. bool-expr → arith-expr compare-op arith-expr
+8. arith-expr → VAR | NUM | ( arith-expr ) | arith-expr + arith-expr |
+arith-expr * arith-expr
+VAR – переменная Б{Б|Ц}, Б – {a, b, c, ...z, A, B, …, Z}, NUM – {0, 1, …, 9}, compare-op – ”==” | ”<” | ”<=” | ”>” | ”>=” | ”!=”
+
+## Классификация грамматики
+Данная грамматика G[begin-stmt] относится к типу 2 по классификации Хомского, то есть является контекстно-свободной грамматикой (КС-грамматикой).
+
+### Признаки контекстно-свободной грамматики:
+Все правила имеют вид:
+A → α
+где:
+A — нетерминальный символ (например, begin-stmt, stmt-list, stmt и т. д.),
+α — цепочка терминалов и/или нетерминалов (может быть пустой, но в данной грамматике пустых правил нет).
+
+Примеры из данной грамматики:
+begin-stmt → begin stmt-list end
+stmt-list → stmt | stmt ; stmt-list
+stmt → if-stmt | while-stmt | begin-stmt | assg-stmt
+if-stmt → if bool-expr then stmt else stmt
+assg-stmt → VAR := arith-expr
+Все они соответствуют форме A → α, что характерно для КС-грамматик.
+
+## Cхема вызова функций
+```
+Parse() → 
+    BeginStmt()
+    [input not empty]? Error
+
+BeginStmt() → 
+    "begin"
+    StmtList()
+    "end"
+
+StmtList() → 
+    Stmt()
+    (";" Stmt())*
+
+Stmt() → 
+    ["if"]? IfStmt()
+    | ["while"]? WhileStmt()
+    | ["begin"]? BeginStmt()
+    | [IsVar()]? AssgStmt()
+
+IfStmt() → 
+    "if"
+    BoolExpr()
+    "then"
+    Stmt()
+    "else"
+    Stmt()
+
+WhileStmt() → 
+    "while"
+    BoolExpr()
+    "do"
+    Stmt()
+
+AssgStmt() → 
+    MatchVar()
+    ":="
+    ArithExpr()
+
+BoolExpr() → 
+    ArithExpr()
+    CompareOp()
+    ArithExpr()
+
+ArithExpr() → 
+    ( "(" ArithExpr() ")" )
+    | MatchNum()
+    | MatchVar()
+    ( ("+" | "*") ArithExpr() )*
+
+CompareOp() → 
+    ("==" | "<" | "<=" | ">" | ">=" | "!=")
+```
+## Тестовые примеры
+`begin x := 5 end`
+
+![image](https://github.com/user-attachments/assets/a65e9c38-63de-4f0d-b28f-6bb4bca48e37)
+
+`begin if x < 10 then y := 20 else y := 30 end`
+
+![image](https://github.com/user-attachments/assets/ec915e08-c51d-4a9d-8978-16466e6cae07)
+
+`begin a := (5 + 3) * 2; b := a + 1 end`
+
+![image](https://github.com/user-attachments/assets/2de4fa1b-0489-4770-b85a-b5038dedff77)
 
