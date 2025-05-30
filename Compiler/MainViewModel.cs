@@ -105,7 +105,7 @@ namespace Compiler
             CloseTabCommand = new RelayCommand(CloseTab);
             HelpCommand = new RelayCommand(ShowHelp); 
             AboutCommand = new RelayCommand(ShowAbout);
-            RunCommand = new RelayCommand(RunRegex);
+            RunCommand = new RelayCommand(RunGrammar);
             ShowTextCommand = new RelayCommand(ShowHtmlPage);
             _editorFontSize = 14;
             _resultFontSize = 14;
@@ -116,18 +116,41 @@ namespace Compiler
             SelectedFile = Files[0];
         }
 
-
-        private void RunRegex(object parameter)
+        private void RunGrammar(object parameter)
         {
-            string type = (string) parameter;
+            string type = (string)parameter;
             ResultText = string.Empty;
-            var result = RegexParser.FindAndFormatMatches(_selectedFile.Text,type);
-            foreach (var str in result)
+            var lexer = new Compiler.NewParser.Lexer(_selectedFile.Text);
+            var tokens = lexer.Tokenize();
+            var parser = new Compiler.NewParser.RecursiveDescentParser(tokens.Tokens);
+            var result= parser.Parse();
+            //var result = RegexParser.FindAndFormatMatches(_selectedFile.Text, type);
+            foreach (var str in tokens.Errors)
             {
-                ResultText += str;
+                ResultText += str + "\n";
             }
-            
+            foreach (var str in result.CallSequence)
+            {
+                ResultText += str +"\n";
+            }
+            foreach (var str in result.Errors)
+            {
+                ResultText += str + "\n";
+            }
         }
+
+
+        //private void RunRegex(object parameter)
+        //{
+        //    string type = (string) parameter;
+        //    ResultText = string.Empty;
+        //    var result = RegexParser.FindAndFormatMatches(_selectedFile.Text,type);
+        //    foreach (var str in result)
+        //    {
+        //        ResultText += str;
+        //    }
+
+        //}
 
         private void Run(object parameter)
         {
