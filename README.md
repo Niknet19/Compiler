@@ -315,3 +315,13 @@ CompareOp() →
 
 ![image](https://github.com/user-attachments/assets/2de4fa1b-0489-4770-b85a-b5038dedff77)
 
+# Дополнительное задание (Лексер)
+
+## Диаграмма сканера
+
+## Тестовые примеры
+`begin x := (5## + 3) * 2 end`
+
+![image](https://github.com/user-attachments/assets/851eb465-5609-4e9c-98e1-87ea42290a16)
+
+
